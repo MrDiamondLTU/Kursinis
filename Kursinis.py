@@ -20,3 +20,21 @@ class HumanPlayer(Player):
                 return row, col
             except (ValueError, IndexError):
                 print("Klaida! Bandyk dar kartą.")
+class AIPlayer(Player):
+    def get_move(self, board):
+        print(f"AI ({self.symbol}) mąsto...")
+        # Paprasta logika: randa laisvas vietas ir pasirenka atsitiktinę
+        available_moves = [(r, c) for r in range(3) for c in range(3) if board.is_valid_move(r, c)]
+        return random.choice(available_moves)
+
+# --- GAMYKLA (Factory) ---
+class PlayerFactory:
+    """Tai yra 'Gamykla', kuri atsakinga už objektų kūrimą."""
+    @staticmethod
+    def create_player(player_type, symbol):
+        if player_type == "human":
+            return HumanPlayer(symbol)
+        elif player_type == "ai":
+            return AIPlayer(symbol)
+        else:
+            raise ValueError("Nežinomas žaidėjo tipas")
