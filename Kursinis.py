@@ -70,3 +70,46 @@ class TicTacToe:
 
     def is_full(self):
         return all(cell != " " for row in self.__board for cell in row)
+
+# --- PALEIDIMAS ---
+def play_game():
+    game = TicTacToe()
+    
+    print("Pasirinkite žaidimo režimą: 1 - Žmogus prieš Žmogų, 2 - Žmogus prieš AI")
+    choice = input("Pasirinkimas (1 arba 2): ")
+    
+    # Kuriame žaidėjus per Factory
+    p1 = PlayerFactory.create_player("human", "X")
+    if choice == "2":
+        p2 = PlayerFactory.create_player("ai", "O")
+    else:
+        p2 = PlayerFactory.create_player("human", "O")
+        
+    players = [p1, p2]
+    current_idx = 0
+
+    while True:
+        game.display_board()
+        player = players[current_idx]
+        
+        # Gauname ėjimą iš žaidėjo (Human arba AI)
+        print(f"Dabar ėjimas: {player.symbol}")
+        r, c = player.get_move(game)
+        
+        if game.make_move(r, c, player.symbol):
+            winner = game.check_winner()
+            if winner:
+                game.display_board()
+                print(f"Laimėjo {winner}!")
+                break
+            if game.is_full():
+                game.display_board()
+                print("Lygiosios!")
+                break
+            # Perjungiame ėjimą
+            current_idx = 1 - current_idx
+        else:
+            print("Negalimas ėjimas! Bandykite dar kartą.")
+
+if __name__ == "__main__":
+    play_game()
