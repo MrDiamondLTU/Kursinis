@@ -20,10 +20,10 @@ class HumanPlayer(Player):
                 return row, col
             except (ValueError, IndexError):
                 print("Klaida! Bandyk dar kartą.")
+
 class AIPlayer(Player):
     def get_move(self, board):
         print(f"AI ({self.symbol}) mąsto...")
-        # Paprasta logika: randa laisvas vietas ir pasirenka atsitiktinę
         available_moves = [(r, c) for r in range(3) for c in range(3) if board.is_valid_move(r, c)]
         return random.choice(available_moves)
 
@@ -38,7 +38,8 @@ class PlayerFactory:
             return AIPlayer(symbol)
         else:
             raise ValueError("Nežinomas žaidėjo tipas")
-            # --- ŽAIDIMO LOGIKA (Nepakitusi, išskyrus žaidėjų sukūrimą) ---
+
+# --- ŽAIDIMO LOGIKA ---
 class TicTacToe:
     def __init__(self):
         self.__board = [[" " for _ in range(3)] for _ in range(3)]
@@ -69,45 +70,3 @@ class TicTacToe:
 
     def is_full(self):
         return all(cell != " " for row in self.__board for cell in row)
-
-# --- PALEIDIMAS ---
-def play_game():
-    game = TicTacToe()
-    
-    # Naudojame Factory Method vietoj tiesioginio klasių kvietimo
-    print("Pasirinkite žaidimo režimą: 1 - Žmogus prieš Žmogų, 2 - Žmogus prieš AI")
-    choice = input("Pasirinkimas: ")
-    
-    p1 = PlayerFactory.create_player("human", "X")
-    if choice == "2":
-        p2 = PlayerFactory.create_player("ai", "O")
-    else:
-        p2 = PlayerFactory.create_player("human", "O")
-        
-    players = [p1, p2]
-    current_idx = 0
-
-    while True:
-        game.display_board()
-        player = players[current_idx]
-        
-        # Jei tai AI, jam reikia perduoti game objektą patikrai
-        r, c = player.get_move(game)
-        
-        if game.make_move(r, c, player.symbol):
-            winner = game.check_winner()
-            if winner:
-                game.display_board()
-                print(f"Laimėjo {winner}!")
-                break
-            if game.is_full():
-                game.display_board()
-                print("Lygiosios!")
-                break
-            current_idx = 1 - current_idx
-        else:
-            if isinstance(player, HumanPlayer):
-                print("Negalimas ėjimas!")
-
-if __name__ == "__main__":
-    play_game()
